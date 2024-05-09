@@ -1,13 +1,19 @@
 package org.example.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.example.model.Game;
 import org.example.model.Hand;
 import org.example.service.BlackJackService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @RestController
 @RequestMapping("/blackjack")
@@ -19,15 +25,29 @@ public class BlackJackController {
 
 
     @GetMapping("/home")
-    public ResponseEntity<?> getHomePage(HttpServletRequest request){
-        if(request.getSession().getAttribute("game") != null){
-            request.getSession().removeAttribute("game");
-        }
+    public ResponseEntity<?> getHomePage(HttpSession session) {
+        try {
+            // Read the HTML file as a String
+            String html = Files.readString(Path.of(new ClassPathResource("static/home.html").getURI()));
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body("BlackJack HomePage");
+            if(session.getAttribute("game")!=null) {
+                session.removeAttribute("game");
+            }
+
+            // Return the HTML string in the ResponseEntity body
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(html);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error loading page");
+        }
     }
+
     @GetMapping("/newgame")
     public ResponseEntity<?> startNewGame(HttpServletRequest request){
         //If no game attribute in session set it to gameinprogress

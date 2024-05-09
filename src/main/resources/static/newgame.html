@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Include the HTMX library -->
+    <script src="https://unpkg.com/htmx.org"></script>
+</head>
+<body>
+<div id="game" hx-get="/blackjack/newgame" hx-trigger="every 1s" hx-swap="outerHTML">
+    <div id="dealerHand">
+        <h2>Dealer's Hand</h2>
+        <p>Score: <span id="dealerScore">{{ dealerHand.score }}</span></p>
+        <ul>
+            {% for card in dealerHand.currentHand %}
+            <li>{{ card.rank }} of {{ card.suit }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div id="playerHand">
+        <h2>Player's Hand</h2>
+        <p>Score: <span id="playerScore">{{ playerHand.score }}</span></p>
+        <ul>
+            {% for card in playerHand.currentHand %}
+            <li>{{ card.rank }} of {{ card.suit }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <button hx-post="/gameinprogress/hit" hx-swap="outerHTML" hx-target="#game">Hit</button>
+    <button hx-post="/gameinprogress/stand" hx-swap="outerHTML" hx-target="#game">Stand</button>
+</div>
+
+<script>
+    function updateGame(response) {
+      var game = document.getElementById('game');
+      game.outerHTML = response;
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Include the HTMX library -->
+    <script src="https://unpkg.com/htmx.org"></script>
+
+    <!-- Styles -->
+    <style>
+        /* Center everything in the body */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh; /* Full height of the viewport */
+            margin: 0;
+            background-color: #f0f0f0; /* Background color */
+            font-family: Arial, sans-serif;
+        }
+
+        /* Styles for headings */
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-top: 0; /* Push the title higher */
+        }
+
+        /* Styles for buttons */
+        button {
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+
+        /* Styles for the rules section */
+        #rules {
+            display: none;
+            margin: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+
+</head>
+<body>
+<h1>BlackJack Home</h1>
+<!-- _hyperscript_ attribute to make an AJAX call to the server -->
+<div hx-get="/blackjack/home" hx-swap="outerHTML">
+    <button id="rulesButton" onclick="toggleRules()">View Rules</button>
+    <!-- New game button -->
+    <button onclick="window.location.href='/blackjack/newgame'">Start New Game</button>
+</div>
+
+<div id="rules">
+    <h2>Game Rules:</h2>
+    <ul>
+        <li>For each game two cards will be drawn for the player and the dealer from four new decks (52 cards per deck) that will be shuffled.</li>
+        <li>The program will deal two cards face up for the player and deal one card face up and one card face down (hidden card) for the dealer</li>
+        <li>Whenever the sum of the displayed cards for the player is less than 21, the player can decide whether they will hit (receive another card). The hand continues until the player decides to stand (not receive another card) or they bust (their sum is over 21)</li>
+        <li>After that, if the player has not busted, the dealer must hit until the sum of the cards is 17 or more.</li>
+        <li>The player wins by not busting and having a total higher than the dealer's. The dealer loses by busting or having a lesser total than the player.</li>
+        <li>If you and the dealer have the same total, it is considered a push and it is a tie. If the player busts, the dealer wins and they do not need to draw any cards.</li>
+        <li>After a game ends, the player can either quit or start a new game.</li>
+    </ul>
+</div>
+
+<script>
+    function toggleRules() {
+        var rulesElement = document.getElementById('rules');
+        var rulesButton = document.getElementById('rulesButton');
+        if (rulesElement) {
+            rulesElement.style.display = "block";
+            rulesButton.remove(); // This will remove the button
+        }
+    }
+</script>
+
+</body>
+</html>
+
