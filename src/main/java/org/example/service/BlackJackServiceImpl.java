@@ -1,6 +1,7 @@
 package org.example.service;
 
 import org.example.model.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class BlackJackServiceImpl implements BlackJackService{
     public void setFinalPlayingDeck(Stack<Card> finalPlayingDeck) {
         this.finalPlayingDeck = finalPlayingDeck;
     }
+
 
     @Override
     public void startGame() {

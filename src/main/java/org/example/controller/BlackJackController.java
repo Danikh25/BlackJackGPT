@@ -4,12 +4,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.example.model.Game;
 import org.example.model.Hand;
+import org.example.model.ChatRequest;
+import org.example.model.ChatResponse;
 import org.example.service.BlackJackService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,9 +24,34 @@ import java.nio.file.Path;
 @RequestMapping("/blackjack")
 @CrossOrigin
 public class BlackJackController {
-
+    @Qualifier("openaiRestTemplate")
+    @Autowired
+    private RestTemplate restTemplate;
     @Autowired
     BlackJackService blackJackService;
+
+
+    @Value("${openai.model}")
+    private String model;
+
+    @Value("${openai.api.url}")
+    private String apiUrl;
+
+    @PostMapping("/chat")
+    public String chat(@RequestParam String prompt) {
+        // create a request
+        ChatRequest request = new ChatRequest(model, prompt);
+
+        // call the API
+        ChatResponse response = restTemplate.postForObject(apiUrl, request, ChatResponse.class);
+
+        if (response == null || response.getChoices() == null || response.getChoices().isEmpty()) {
+            return "No response";
+        }
+
+        // return the first response
+        return response.getChoices().get(0).getMessage().getContent();
+    }
 
 
     @GetMapping("/home")
